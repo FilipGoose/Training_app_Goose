@@ -3,49 +3,167 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trænings App PRO</title>
-<link rel="manifest" href="manifest.json">
+<title>Training App</title>
 
 <style>
-body { font-family: Arial; margin:0; background:#0f172a; color:white; }
-.tabs { display:flex; border:1px solid #475569; margin:10px; }
-.tab { flex:1; padding:12px; text-align:center; cursor:pointer; background:#1e293b; font-size:12px; }
-.tab.active { background:#3b82f6; }
-.container { padding:10px; max-width:900px; margin:auto; text-align:center; }
-.day-tabs { display:flex; justify-content:center; gap:10px; margin:20px 0; }
-.day-tab { padding:10px 18px; border-radius:12px; background:#e5e7eb; color:#000; cursor:pointer; }
-.day-tab.active { background:#1d4ed8; color:white; }
-.day-tab { flex:1; padding:12px; cursor:pointer; background:#1e293b; }
-.day-tab.active { background:#3b82f6; }
-.card { background:#1e293b; padding:12px; border-radius:16px; margin-bottom:10px; }
-button { padding:10px; margin:5px; border:none; border-radius:10px; cursor:pointer; }
+body { margin:0; font-family:Arial; background:#0f172a; color:white; }
 
-.workout-mode { text-align:center; }
-.big { font-size:28px; margin:15px 0; }
+/* PROGRAM TABS */
+.tabs { display:flex; border-bottom:1px solid #334155; }
+.tab { flex:1; text-align:center; padding:14px; background:#1e293b; cursor:pointer; }
+.tab.active { background:#3b82f6; }
+
+/* DAY TABS */
+.day-tabs { display:flex; justify-content:center; gap:10px; margin:20px 0; }
+.day-tab { padding:10px 18px; border-radius:12px; background:#e5e7eb; color:black; cursor:pointer; }
+.day-tab.active { background:#1d4ed8; color:white; }
+
+/* CONTENT */
+.container { max-width:800px; margin:auto; padding:20px; }
+.card { background:#1e293b; padding:20px; border-radius:20px; text-align:center; }
+
+/* WORKOUT MODE */
+.big { font-size:28px; margin:10px 0; }
 small { color:#94a3b8; }
+button { padding:10px 20px; margin:10px; border:none; border-radius:10px; cursor:pointer; }
 </style>
 </head>
+
 <body>
 
 <div class="tabs">
-  <div class="tab active" onclick="selectTab(1)">P1</div>
-  <div class="tab" onclick="selectTab(2)">P2</div>
-  <div class="tab" onclick="selectTab(3)">P3</div>
-  <div class="tab" onclick="selectTab(4)">P4</div>
-  <div class="tab" onclick="selectTab(5)">ABS</div>
+  <div class="tab active" onclick="selectProgram(1)">P1</div>
+  <div class="tab" onclick="selectProgram(2)">P2</div>
+  <div class="tab" onclick="selectProgram(3)">P3</div>
+  <div class="tab" onclick="selectProgram(4)">P4</div>
+  <div class="tab" onclick="selectProgram(5)">ABS</div>
 </div>
 
 <div class="container">
-  <div class="card" id="days"></div>
+  <div id="days"></div>
   <div class="card" id="workout"></div>
 </div>
 
 <script>
 let currentProgram = 1;
 let currentWorkout = [];
-let currentIndex = 0;
+let index = 0;
 
-function selectTab(p){
+/* PROGRAM DATA */
+const programs = {
+
+1:{
+1:[
+{name:"Bike", reps:"10-15 min", desc:"Opvarmning"},
+{name:"Front Squat", reps:"3x5", desc:"Ret ryg"},
+{name:"Incline Bench", reps:"3x6-8", desc:"Kontrol"},
+{name:"Pull Ups", reps:"MAX", desc:"Hage over stang"},
+{name:"Bulgarian Split Squat", reps:"8-10", desc:"Balance"},
+{name:"Ring Dips", reps:"5-10", desc:"Kontrol"}
+],
+2:[
+{name:"Deadlift", reps:"3x5", desc:"Tung"},
+{name:"Strict Press", reps:"3x6-8", desc:"Overhead"},
+{name:"Reverse Lunge", reps:"6-8", desc:"Bagud"},
+{name:"Row", reps:"10-12", desc:"Træk"}
+],
+3:[
+{name:"Bench Press", reps:"3x5", desc:"Pres"},
+{name:"Squat", reps:"3x6-8", desc:"Dybde"},
+{name:"Lat Pulldown", reps:"8-10", desc:"Ryg"},
+{name:"Arnold Press", reps:"8-10", desc:"Rotation"}
+]
+},
+
+2:{
+1:[
+{name:"Deep Squat", reps:"3x8-10", desc:"Dyb"},
+{name:"Incline DB Press", reps:"3x8-10", desc:"Pres"},
+{name:"Lat Pulldown", reps:"3x8-10", desc:"Træk"},
+{name:"Bulgarian Split Squat", reps:"3x8-12", desc:"Ben"}
+],
+2:[
+{name:"Deadlift", reps:"3x8-10", desc:"Kontrol"},
+{name:"Reverse Lunge", reps:"8-10", desc:"Skift ben"},
+{name:"Row", reps:"8-10", desc:"Træk"},
+{name:"Shoulder Press", reps:"8-10", desc:"Pres"}
+],
+3:[
+{name:"Front Squat", reps:"3x8-10", desc:"Albuer op"},
+{name:"Pulldown", reps:"8-10", desc:"Ryg"},
+{name:"Lunge", reps:"8-10", desc:"Kontrol"},
+{name:"Floor Press", reps:"8-10", desc:"Pres"}
+]
+},
+
+3:{
+1:[
+{name:"Leg Press", reps:"12-15", desc:"Ben"},
+{name:"Push Ups", reps:"MAX", desc:"Bryst"},
+{name:"RDL", reps:"12-15", desc:"Hofte"},
+{name:"Shoulder Press", reps:"12-15", desc:"Skulder"}
+],
+2:[
+{name:"Deadlift", reps:"4-6", desc:"Tung"},
+{name:"Core Hold", reps:"20-40s", desc:"Core"},
+{name:"Bench Press", reps:"4-6", desc:"Eksplosiv"},
+{name:"Row", reps:"6-8", desc:"Ryg"}
+],
+3:[
+{name:"Bench Press", reps:"5", desc:"Styrke"},
+{name:"Incline Bench", reps:"8-10", desc:"Bryst"},
+{name:"Chin Ups", reps:"MAX", desc:"Underhånd"}
+]
+},
+
+4:{
+1:[
+{name:"Air Squat", reps:"15"},
+{name:"Sit Up", reps:"10"},
+{name:"Push Ups", reps:"5"},
+{name:"Reverse Lunge", reps:"10"},
+{name:"Plank Knee Elbow", reps:"8"},
+{name:"Inverted Row", reps:"6"}
+],
+2:[
+{name:"Bulgarian Split Squat", reps:"10"},
+{name:"Walkout Pushup", reps:"5"},
+{name:"Jackknife Crunch", reps:"10"},
+{name:"Down Ups", reps:"5"}
+],
+3:[
+{name:"Burpee", reps:"30"},
+{name:"V Sit", reps:"30"},
+{name:"Jump Squat", reps:"30"},
+{name:"Push Ups", reps:"30"}
+]
+},
+
+5:{
+1:[
+{name:"Crunch", reps:"20s"},
+{name:"Plank Knee Elbow", reps:"20s"},
+{name:"Leg Raise", reps:"20s"},
+{name:"Plank Arm Wipe", reps:"20s"}
+],
+2:[
+{name:"Sit Up", reps:"30"},
+{name:"Mountain Climbers", reps:"30"},
+{name:"Toe Touch", reps:"10-20"},
+{name:"Side Plank", reps:"20-40s"}
+],
+3:[
+{name:"Atomic Situps", reps:"8-12"},
+{name:"Plank Taps", reps:"8-12"},
+{name:"Hip Thrust", reps:"8-12"},
+{name:"Hollow Hold", reps:"10-20s"}
+]
+}
+
+};
+
+/* UI */
+function selectProgram(p){
   currentProgram = p;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab')[p-1].classList.add('active');
@@ -61,9 +179,9 @@ function renderDays(){
 
   const days = Object.keys(programs[currentProgram]);
 
-  days.forEach((d, i)=>{
+  days.forEach((d,i)=>{
     const tab = document.createElement('div');
-    tab.className = 'day-tab' + (i===0 ? ' active' : '');
+    tab.className = 'day-tab' + (i===0 ? ' active':'');
     tab.innerText = 'Dag ' + d;
 
     tab.onclick = ()=>{
@@ -76,234 +194,36 @@ function renderDays(){
   });
 
   daysDiv.appendChild(wrapper);
-
-  // load first day automatically
   loadDay(days[0]);
-};
-    wrapper.appendChild(tab);
-  });
-
-  daysDiv.appendChild(wrapper);
-
-  // auto load first day
-  const firstDay = Object.keys(programs[currentProgram])[0];
-  loadDay(firstDay);
-});
 }
 
 function loadDay(day){
-  currentWorkout = programs[currentProgram][day].filter(e => !e.section);
-  currentIndex = 0;
-  renderWorkoutMode();
+  currentWorkout = programs[currentProgram][day];
+  index = 0;
+  renderWorkout();
 }
 
-function renderWorkoutMode(){
+function renderWorkout(){
+  const ex = currentWorkout[index];
   const container = document.getElementById('workout');
-  const ex = currentWorkout[currentIndex];
 
   if(!ex){
-    container.innerHTML = '<h2>Workout færdig 🎉</h2>';
+    container.innerHTML = "<h2>Færdig 🎉</h2>";
     return;
   }
 
   container.innerHTML = `
-    <div class="workout-mode">
-      <div class="big"><strong>${ex.name}</strong></div>
-      <div class="big">${ex.reps}</div>
-      <small>${ex.desc || ""}</small>
-      <br><br>
-      <button onclick="prevExercise()">⬅️</button>
-      <button onclick="nextExercise()">➡️</button>
-    </div>
+    <div class="big"><strong>${ex.name}</strong></div>
+    <div class="big">${ex.reps}</div>
+    <small>${ex.desc || ""}</small>
+    <br>
+    <button onclick="prev()">⬅️</button>
+    <button onclick="next()">➡️</button>
   `;
 }
 
-function nextExercise(){ currentIndex++; renderWorkoutMode(); }
-function prevExercise(){ if(currentIndex>0){ currentIndex--; renderWorkoutMode(); }}
-
-// ===== FULL DATA =====
-// ===== FULL DATA (ALLE ØVELSER FRA PDF'er) =====
-const programs = {
-
-1:{
-1:[
-{section:"Opvarmning"},
-{name:"Bike", reps:"10-15 min", desc:"Rolig cykling"},
-
-{section:"Styrke"},
-{name:"Front Squat", reps:"3x5", desc:"Ret ryg og dybde"},
-{name:"Incline Bench Press", reps:"3x6-8", desc:"Kontrolleret pres"},
-{name:"Pull Ups", reps:"3xMAX", desc:"Hage over stang"},
-
-{section:"Superset"},
-{name:"Bulgarian Split Squat", reps:"8-10", desc:"Balance"},
-{name:"Ring Dips", reps:"5-10", desc:"Kontrol"},
-
-{section:"Accessory"},
-{name:"Machine Fly", reps:"12-15", desc:"Bryst"},
-{name:"Tricep Extension", reps:"10-12", desc:"Triceps"},
-{name:"Bicep Curl", reps:"12-15", desc:"Biceps"},
-{name:"Core", reps:"10-15", desc:"Mave"}
-],
-
-2:[
-{section:"Opvarmning"},
-{name:"Elliptical", reps:"10-15 min", desc:"Cardio"},
-
-{section:"Styrke"},
-{name:"Deadlift", reps:"3x5", desc:"Tung"},
-{name:"Strict Press", reps:"3x6-8", desc:"Overhead"},
-
-{section:"Superset"},
-{name:"Reverse Lunge", reps:"6-8", desc:"Bagud"},
-{name:"DB Fly", reps:"10-12", desc:"Bryst"},
-{name:"Row", reps:"10-12", desc:"Ryg"},
-{name:"Floor Fly", reps:"10-12", desc:"Bryst"},
-
-{section:"Arme/Core"},
-{name:"Bicep Curl", reps:"15-20", desc:"Biceps"},
-{name:"Push Ups", reps:"MAX", desc:"Bryst"}
-],
-
-3:[
-{section:"Opvarmning"},
-{name:"Row", reps:"1500m", desc:"Cardio"},
-
-{section:"Styrke"},
-{name:"Bench Press", reps:"3x5", desc:"Pres"},
-{name:"Squat", reps:"3x6-8", desc:"Dybde"},
-
-{section:"Superset"},
-{name:"Lat Pulldown", reps:"8-10", desc:"Ryg"},
-{name:"Arnold Press", reps:"8-10", desc:"Skulder"},
-
-{section:"Accessory"},
-{name:"Leg Extension", reps:"15-20", desc:"Ben"},
-{name:"Shoulder Raises", reps:"8-10", desc:"Skulder"},
-{name:"Tricep Pushdown", reps:"15-20", desc:"Triceps"}
-]
-},
-
-2:{
-1:[
-{section:"Opvarmning"},
-{name:"Bike", reps:"5-10 min", desc:"Let cardio"},
-
-{section:"Styrke"},
-{name:"Deep Squat", reps:"3x8-10", desc:"Dyb"},
-{name:"Incline DB Press", reps:"3x8-10", desc:"Pres"},
-{name:"Lat Pulldown", reps:"3x8-10", desc:"Ryg"},
-{name:"Bulgarian Split Squat", reps:"3x8-12", desc:"Ben"}
-],
-
-2:[
-{section:"Opvarmning"},
-{name:"Elliptical", reps:"5-10 min", desc:"Cardio"},
-
-{section:"Styrke"},
-{name:"Deadlift", reps:"3x8-10", desc:"Kontrol"},
-{name:"Reverse Lunge", reps:"8-10", desc:"Ben"},
-{name:"Row", reps:"8-10", desc:"Ryg"},
-{name:"Shoulder Press", reps:"8-10", desc:"Skulder"}
-],
-
-3:[
-{section:"Opvarmning"},
-{name:"Row", reps:"1200m", desc:"Cardio"},
-
-{section:"Styrke"},
-{name:"Front Squat", reps:"3x8-10", desc:"Albuer op"},
-{name:"Pulldown", reps:"8-10", desc:"Ryg"},
-{name:"Lunge", reps:"8-10", desc:"Ben"},
-{name:"Floor Press", reps:"8-10", desc:"Pres"}
-]
-},
-
-3:{
-1:[
-{section:"Supersets"},
-{name:"Leg Press", reps:"12-15", desc:"Ben"},
-{name:"Push Ups", reps:"MAX", desc:"Bryst"},
-{name:"RDL", reps:"12-15", desc:"Hofte"},
-{name:"Shoulder Press", reps:"12-15", desc:"Skulder"}
-],
-
-2:[
-{section:"Supersets"},
-{name:"Deadlift", reps:"4-6", desc:"Tung"},
-{name:"Core Hold", reps:"20-40s", desc:"Core"},
-{name:"Bench Press", reps:"4-6", desc:"Pres"},
-{name:"Row", reps:"6-8", desc:"Ryg"}
-],
-
-3:[
-{section:"Supersets"},
-{name:"Bench Press", reps:"5", desc:"Styrke"},
-{name:"Incline Bench", reps:"8-10", desc:"Bryst"},
-{name:"Chin Ups", reps:"MAX", desc:"Underhånd"}
-]
-},
-
-4:{
-1:[
-{name:"Air Squat", reps:"15", desc:"Squat"},
-{name:"Sit Up", reps:"10", desc:"Core"},
-{name:"Push Ups", reps:"5", desc:"Bryst"},
-{name:"Reverse Lunge", reps:"10", desc:"Ben"},
-{name:"Knee to Elbow Plank", reps:"8", desc:"Core"},
-{name:"Inverted Row", reps:"6", desc:"Ryg"}
-],
-
-2:[
-{name:"Bulgarian Split Squat", reps:"10", desc:"Ben"},
-{name:"Walkout Pushup", reps:"5", desc:"Core"},
-{name:"Jackknife Crunch", reps:"10", desc:"Mave"},
-{name:"Down Ups", reps:"5", desc:"Burpee"}
-],
-
-3:[
-{name:"Burpee", reps:"30", desc:"Full body"},
-{name:"V Sit", reps:"30", desc:"Core"},
-{name:"Jump Squat", reps:"30", desc:"Eksplosiv"},
-{name:"Air Bike", reps:"30", desc:"Core"},
-{name:"Push Ups", reps:"30", desc:"Bryst"},
-{name:"Split Jump Lunge", reps:"30", desc:"Ben"},
-{name:"Mountain Climbers", reps:"30", desc:"Core"},
-{name:"Jumping Jacks", reps:"30", desc:"Cardio"},
-{name:"Superman", reps:"30", desc:"Ryg"},
-{name:"Froggers", reps:"30", desc:"Core"}
-]
-},
-
-5:{
-1:[
-{name:"Crunch", reps:"20s", desc:"Mave"},
-{name:"Plank Knee Elbow", reps:"20s", desc:"Core"},
-{name:"Leg Raise", reps:"20s", desc:"Mave"},
-{name:"Plank Arm Wipe", reps:"20s", desc:"Stabilitet"},
-{name:"Air Bike", reps:"20s", desc:"Core"},
-{name:"Plank Jacks", reps:"20s", desc:"Core"}
-],
-
-2:[
-{name:"Sit Up", reps:"30", desc:"Mave"},
-{name:"Mountain Climbers", reps:"30", desc:"Core"},
-{name:"Toe Touch", reps:"10-20", desc:"Mave"},
-{name:"Side Plank", reps:"20-40s", desc:"Side core"},
-{name:"Flutter Kicks", reps:"30", desc:"Mave"},
-{name:"Plank", reps:"30", desc:"Core"}
-],
-
-3:[
-{name:"Atomic Situps", reps:"8-12", desc:"Core"},
-{name:"Plank Shoulder Taps", reps:"8-12", desc:"Stabilitet"},
-{name:"Knee to Elbow", reps:"8-12", desc:"Core"},
-{name:"Hip Thrust", reps:"8-12", desc:"Mave"},
-{name:"Hollow Hold", reps:"10-20s", desc:"Core"},
-{name:"Body Saw", reps:"8-12", desc:"Core"}
-]
-}
-};
+function next(){ index++; renderWorkout(); }
+function prev(){ if(index>0){ index--; renderWorkout(); } }
 
 renderDays();
 </script>
