@@ -167,7 +167,10 @@ function selectProgram(p){
   currentProgram = p;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab')[p-1].classList.add('active');
+ window.onload = () => {
+   console.log(programs);
   renderDays();
+};
 }
 
 function renderDays(){
@@ -182,7 +185,7 @@ function renderDays(){
   days.forEach((d,i)=>{
     const tab = document.createElement('div');
     tab.className = 'day-tab' + (i===0 ? ' active':'');
-    tab.innerText = 'Dag ' + d;
+    tab.textContent = 'DAG ' + d;
 
     tab.onclick = ()=>{
       document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));
