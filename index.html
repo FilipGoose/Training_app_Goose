@@ -11,7 +11,10 @@ body { font-family: Arial; margin:0; background:#0f172a; color:white; }
 .tabs { display:flex; border:1px solid #475569; margin:10px; }
 .tab { flex:1; padding:12px; text-align:center; cursor:pointer; background:#1e293b; font-size:12px; }
 .tab.active { background:#3b82f6; }
-.container { padding:10px; max-width:900px; margin:auto; }
+.container { padding:10px; max-width:900px; margin:auto; text-align:center; }
+.day-tabs { display:flex; justify-content:center; margin:10px 0; border:1px solid #475569; }
+.day-tab { flex:1; padding:12px; cursor:pointer; background:#1e293b; }
+.day-tab.active { background:#3b82f6; }
 .card { background:#1e293b; padding:12px; border-radius:16px; margin-bottom:10px; }
 button { padding:10px; margin:5px; border:none; border-radius:10px; cursor:pointer; }
 
@@ -49,13 +52,29 @@ function selectTab(p){
 
 function renderDays(){
   const daysDiv = document.getElementById('days');
-  daysDiv.innerHTML = '<h3>Vælg Dag</h3>';
-  Object.keys(programs[currentProgram]).forEach(d=>{
-    const btn = document.createElement('button');
-    btn.innerText = 'Dag ' + d;
-    btn.onclick = ()=>loadDay(d);
-    daysDiv.appendChild(btn);
+  daysDiv.innerHTML = '';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'day-tabs';
+
+  Object.keys(programs[currentProgram]).forEach((d, i)=>{
+    const tab = document.createElement('div');
+    tab.className = 'day-tab' + (i===0 ? ' active' : '');
+    tab.innerText = 'DAG ' + d;
+    tab.onclick = ()=>{
+      document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      loadDay(d);
+    };
+    wrapper.appendChild(tab);
   });
+
+  daysDiv.appendChild(wrapper);
+
+  // auto load first day
+  const firstDay = Object.keys(programs[currentProgram])[0];
+  loadDay(firstDay);
+});
 }
 
 function loadDay(day){
@@ -89,68 +108,124 @@ function nextExercise(){ currentIndex++; renderWorkoutMode(); }
 function prevExercise(){ if(currentIndex>0){ currentIndex--; renderWorkoutMode(); }}
 
 // ===== FULL DATA =====
+// ===== FULL DATA (ALLE ØVELSER FRA PDF'er) =====
 const programs = {
 
 1:{
 1:[
-{name:"Bike", reps:"10-15 min", desc:"Opvarmning"},
-{name:"Front Squat", reps:"3x5", desc:"Ret ryg"},
-{name:"Incline Bench", reps:"3x6-8", desc:"Kontrol"},
-{name:"Pull Ups", reps:"MAX", desc:"Hage over stang"},
+{section:"Opvarmning"},
+{name:"Bike", reps:"10-15 min", desc:"Rolig cykling"},
+
+{section:"Styrke"},
+{name:"Front Squat", reps:"3x5", desc:"Ret ryg og dybde"},
+{name:"Incline Bench Press", reps:"3x6-8", desc:"Kontrolleret pres"},
+{name:"Pull Ups", reps:"3xMAX", desc:"Hage over stang"},
+
+{section:"Superset"},
 {name:"Bulgarian Split Squat", reps:"8-10", desc:"Balance"},
-{name:"Ring Dips", reps:"5-10", desc:"Kontrol"}
+{name:"Ring Dips", reps:"5-10", desc:"Kontrol"},
+
+{section:"Accessory"},
+{name:"Machine Fly", reps:"12-15", desc:"Bryst"},
+{name:"Tricep Extension", reps:"10-12", desc:"Triceps"},
+{name:"Bicep Curl", reps:"12-15", desc:"Biceps"},
+{name:"Core", reps:"10-15", desc:"Mave"}
 ],
+
 2:[
+{section:"Opvarmning"},
+{name:"Elliptical", reps:"10-15 min", desc:"Cardio"},
+
+{section:"Styrke"},
 {name:"Deadlift", reps:"3x5", desc:"Tung"},
 {name:"Strict Press", reps:"3x6-8", desc:"Overhead"},
+
+{section:"Superset"},
 {name:"Reverse Lunge", reps:"6-8", desc:"Bagud"},
-{name:"Row", reps:"10-12", desc:"Træk"}
+{name:"DB Fly", reps:"10-12", desc:"Bryst"},
+{name:"Row", reps:"10-12", desc:"Ryg"},
+{name:"Floor Fly", reps:"10-12", desc:"Bryst"},
+
+{section:"Arme/Core"},
+{name:"Bicep Curl", reps:"15-20", desc:"Biceps"},
+{name:"Push Ups", reps:"MAX", desc:"Bryst"}
 ],
+
 3:[
+{section:"Opvarmning"},
+{name:"Row", reps:"1500m", desc:"Cardio"},
+
+{section:"Styrke"},
 {name:"Bench Press", reps:"3x5", desc:"Pres"},
 {name:"Squat", reps:"3x6-8", desc:"Dybde"},
-{name:"Lat Pulldown", reps:"8-10", desc:"Træk"},
-{name:"Arnold Press", reps:"8-10", desc:"Rotation"}
+
+{section:"Superset"},
+{name:"Lat Pulldown", reps:"8-10", desc:"Ryg"},
+{name:"Arnold Press", reps:"8-10", desc:"Skulder"},
+
+{section:"Accessory"},
+{name:"Leg Extension", reps:"15-20", desc:"Ben"},
+{name:"Shoulder Raises", reps:"8-10", desc:"Skulder"},
+{name:"Tricep Pushdown", reps:"15-20", desc:"Triceps"}
 ]
 },
 
 2:{
 1:[
+{section:"Opvarmning"},
+{name:"Bike", reps:"5-10 min", desc:"Let cardio"},
+
+{section:"Styrke"},
 {name:"Deep Squat", reps:"3x8-10", desc:"Dyb"},
-{name:"Incline DB Press", reps:"3x8-10", desc:"Kontrol"},
-{name:"Lat Pulldown", reps:"3x8-10", desc:"Træk"},
-{name:"Bulgarian Split Squat", reps:"3x8-12", desc:"Balance"}
+{name:"Incline DB Press", reps:"3x8-10", desc:"Pres"},
+{name:"Lat Pulldown", reps:"3x8-10", desc:"Ryg"},
+{name:"Bulgarian Split Squat", reps:"3x8-12", desc:"Ben"}
 ],
+
 2:[
+{section:"Opvarmning"},
+{name:"Elliptical", reps:"5-10 min", desc:"Cardio"},
+
+{section:"Styrke"},
 {name:"Deadlift", reps:"3x8-10", desc:"Kontrol"},
-{name:"Reverse Lunge", reps:"8-10", desc:"Skift ben"},
-{name:"Row", reps:"8-10", desc:"Træk"},
-{name:"Shoulder Press", reps:"8-10", desc:"Pres"}
+{name:"Reverse Lunge", reps:"8-10", desc:"Ben"},
+{name:"Row", reps:"8-10", desc:"Ryg"},
+{name:"Shoulder Press", reps:"8-10", desc:"Skulder"}
 ],
+
 3:[
+{section:"Opvarmning"},
+{name:"Row", reps:"1200m", desc:"Cardio"},
+
+{section:"Styrke"},
 {name:"Front Squat", reps:"3x8-10", desc:"Albuer op"},
-{name:"Pulldown", reps:"8-10", desc:"Træk"},
-{name:"Lunge", reps:"8-10", desc:"Kontrol"},
+{name:"Pulldown", reps:"8-10", desc:"Ryg"},
+{name:"Lunge", reps:"8-10", desc:"Ben"},
 {name:"Floor Press", reps:"8-10", desc:"Pres"}
 ]
 },
 
 3:{
 1:[
-{name:"Leg Press", reps:"12-15", desc:"Pres"},
-{name:"Push Ups", reps:"MAX", desc:"Krop"},
+{section:"Supersets"},
+{name:"Leg Press", reps:"12-15", desc:"Ben"},
+{name:"Push Ups", reps:"MAX", desc:"Bryst"},
 {name:"RDL", reps:"12-15", desc:"Hofte"},
-{name:"Shoulder Press", reps:"12-15", desc:"Pres"}
+{name:"Shoulder Press", reps:"12-15", desc:"Skulder"}
 ],
+
 2:[
+{section:"Supersets"},
 {name:"Deadlift", reps:"4-6", desc:"Tung"},
-{name:"Core Hold", reps:"20-40s", desc:"Spænd"},
-{name:"Bench Press", reps:"4-6", desc:"Eksplosiv"},
-{name:"Row", reps:"6-8", desc:"Træk"}
+{name:"Core Hold", reps:"20-40s", desc:"Core"},
+{name:"Bench Press", reps:"4-6", desc:"Pres"},
+{name:"Row", reps:"6-8", desc:"Ryg"}
 ],
+
 3:[
-{name:"Bench", reps:"5", desc:"Styrke"},
-{name:"Incline", reps:"8-10", desc:"Øvre bryst"},
+{section:"Supersets"},
+{name:"Bench Press", reps:"5", desc:"Styrke"},
+{name:"Incline Bench", reps:"8-10", desc:"Bryst"},
 {name:"Chin Ups", reps:"MAX", desc:"Underhånd"}
 ]
 },
@@ -161,20 +236,28 @@ const programs = {
 {name:"Sit Up", reps:"10", desc:"Core"},
 {name:"Push Ups", reps:"5", desc:"Bryst"},
 {name:"Reverse Lunge", reps:"10", desc:"Ben"},
-{name:"Plank Knee Elbow", reps:"8", desc:"Core"},
+{name:"Knee to Elbow Plank", reps:"8", desc:"Core"},
 {name:"Inverted Row", reps:"6", desc:"Ryg"}
 ],
+
 2:[
 {name:"Bulgarian Split Squat", reps:"10", desc:"Ben"},
 {name:"Walkout Pushup", reps:"5", desc:"Core"},
 {name:"Jackknife Crunch", reps:"10", desc:"Mave"},
 {name:"Down Ups", reps:"5", desc:"Burpee"}
 ],
+
 3:[
 {name:"Burpee", reps:"30", desc:"Full body"},
 {name:"V Sit", reps:"30", desc:"Core"},
 {name:"Jump Squat", reps:"30", desc:"Eksplosiv"},
-{name:"Push Ups", reps:"30", desc:"Bryst"}
+{name:"Air Bike", reps:"30", desc:"Core"},
+{name:"Push Ups", reps:"30", desc:"Bryst"},
+{name:"Split Jump Lunge", reps:"30", desc:"Ben"},
+{name:"Mountain Climbers", reps:"30", desc:"Core"},
+{name:"Jumping Jacks", reps:"30", desc:"Cardio"},
+{name:"Superman", reps:"30", desc:"Ryg"},
+{name:"Froggers", reps:"30", desc:"Core"}
 ]
 },
 
@@ -183,19 +266,27 @@ const programs = {
 {name:"Crunch", reps:"20s", desc:"Mave"},
 {name:"Plank Knee Elbow", reps:"20s", desc:"Core"},
 {name:"Leg Raise", reps:"20s", desc:"Mave"},
-{name:"Plank Arm Wipe", reps:"20s", desc:"Stabilitet"}
+{name:"Plank Arm Wipe", reps:"20s", desc:"Stabilitet"},
+{name:"Air Bike", reps:"20s", desc:"Core"},
+{name:"Plank Jacks", reps:"20s", desc:"Core"}
 ],
+
 2:[
 {name:"Sit Up", reps:"30", desc:"Mave"},
 {name:"Mountain Climbers", reps:"30", desc:"Core"},
 {name:"Toe Touch", reps:"10-20", desc:"Mave"},
-{name:"Side Plank", reps:"20-40s", desc:"Side core"}
+{name:"Side Plank", reps:"20-40s", desc:"Side core"},
+{name:"Flutter Kicks", reps:"30", desc:"Mave"},
+{name:"Plank", reps:"30", desc:"Core"}
 ],
+
 3:[
 {name:"Atomic Situps", reps:"8-12", desc:"Core"},
-{name:"Plank Taps", reps:"8-12", desc:"Stabilitet"},
+{name:"Plank Shoulder Taps", reps:"8-12", desc:"Stabilitet"},
+{name:"Knee to Elbow", reps:"8-12", desc:"Core"},
 {name:"Hip Thrust", reps:"8-12", desc:"Mave"},
-{name:"Hollow Hold", reps:"10-20s", desc:"Core"}
+{name:"Hollow Hold", reps:"10-20s", desc:"Core"},
+{name:"Body Saw", reps:"8-12", desc:"Core"}
 ]
 }
 };
